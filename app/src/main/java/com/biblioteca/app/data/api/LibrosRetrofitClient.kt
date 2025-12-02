@@ -7,8 +7,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object LibrosRetrofitClient {
     
-    // backend desplegado en render
-    private const val URL_BASE = "https://booksy-backend-jkte.onrender.com/"
+    // backend fullstack desplegado en render con jwt y roles
+    private const val URL_BASE = "https://booksy-backend-fullstack.onrender.com/"
     
     // variable para guardar el token
     private var tokenActual: String? = null
