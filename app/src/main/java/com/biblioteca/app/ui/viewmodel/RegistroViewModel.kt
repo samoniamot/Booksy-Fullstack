@@ -3,15 +3,14 @@ package com.biblioteca.app.ui.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.biblioteca.app.data.repository.AuthRepository
 import com.biblioteca.app.data.repository.PreferenciasRepository
-import com.biblioteca.app.data.model.SolicitudRegistro
-import com.biblioteca.app.data.api.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class RegistroViewModel(private val contexto: Context) : ViewModel() {
-    private val apiService = RetrofitClient.apiService
+    private val authRepo = AuthRepository()
     private val preferencias = PreferenciasRepository(contexto)
     
     private val _nombre = MutableStateFlow("")
@@ -46,12 +45,12 @@ class RegistroViewModel(private val contexto: Context) : ViewModel() {
     
     fun registrar(onExito: () -> Unit) {
         if (_nombre.value.isEmpty() || _email.value.isEmpty() || _password.value.isEmpty()) {
-            _error.value = "completa todos"
+            _error.value = "completa todos los campos"
             return
         }
         
-        if (_password.value.length < 8) {
-            _error.value = "la contraseña debe tener al menos 8 caracteres"
+        if (_password.value.length < 6) {
+            _error.value = "la contraseña debe tener al menos 6 caracteres"
             return
         }
         
@@ -59,27 +58,22 @@ class RegistroViewModel(private val contexto: Context) : ViewModel() {
         _error.value = null
         
         viewModelScope.launch {
-            try {
-                val solicitud = SolicitudRegistro(
-                    name = _nombre.value,
-                    email = _email.value,
-                    password = _password.value
+            val resultado = authRepo.registro(_email.value, _password.value, _nombre.value)
+            
+            resultado.onSuccess { respuesta ->
+                preferencias.guardarSesion(
+                    token = respuesta.token,
+                    id = respuesta.id,
+                    email = respuesta.email,
+                    nombre = respuesta.nombre,
+                    rol = respuesta.rol
                 )
-                
-                val respuesta = apiService.registro(solicitud)
-                
-                if (respuesta.isSuccessful && respuesta.body() != null) {
-                    val token = respuesta.body()!!.authToken
-                    preferencias.guardarToken(token)
-                    onExito()
-                } else {
-                    _error.value = "error inesperado"
-                }
-            } catch (e: Exception) {
-                _error.value = "error de conexion"
-            } finally {
-                _cargando.value = false
+                onExito()
+            }.onFailure { e ->
+                _error.value = e.message ?: "error al registrar"
             }
+            
+            _cargando.value = false
         }
     }
 }

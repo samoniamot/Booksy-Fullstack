@@ -6,11 +6,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -29,9 +31,9 @@ fun PerfilScreen(
     
     val nombre by viewModel.nombre.collectAsState()
     val email by viewModel.email.collectAsState()
+    val rol by viewModel.rol.collectAsState()
     val imagenUri by viewModel.imagenUri.collectAsState()
-    val cargando by viewModel.cargando.collectAsState()
-    val error by viewModel.error.collectAsState()
+    val esAdmin by viewModel.esAdmin.collectAsState()
     
     var mostrarDialogo by remember { mutableStateOf(false) }
     
@@ -63,7 +65,8 @@ fun PerfilScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(16.dp)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(20.dp))
             
@@ -94,21 +97,61 @@ fun PerfilScreen(
             
             Spacer(modifier = Modifier.height(20.dp))
             
-            if (cargando) {
-                Text("cargando...")
-            } else {
-                Text("nombre", fontSize = 12.sp)
-                Text(text = nombre, fontSize = 18.sp)
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Text("correo", fontSize = 12.sp)
-                Text(text = email, fontSize = 18.sp)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text("nombre", fontSize = 12.sp, color = MaterialTheme.colorScheme.outline)
+                    Text(text = nombre, fontSize = 18.sp)
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Text("correo", fontSize = 12.sp, color = MaterialTheme.colorScheme.outline)
+                    Text(text = email, fontSize = 18.sp)
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Text("rol", fontSize = 12.sp, color = MaterialTheme.colorScheme.outline)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = rol, fontSize = 18.sp)
+                        if (esAdmin) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            AssistChip(
+                                onClick = {},
+                                label = { Text("administrador") },
+                                colors = AssistChipDefaults.assistChipColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                                )
+                            )
+                        }
+                    }
+                }
             }
             
-            if (error != null) {
+            if (esAdmin) {
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(text = error!!)
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            "permisos de administrador",
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "puedes crear editar y eliminar libros del catalogo",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
             }
         }
         

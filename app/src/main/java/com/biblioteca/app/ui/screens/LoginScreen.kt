@@ -86,8 +86,8 @@ fun LoginScreen(
         
         Spacer(modifier = Modifier.height(16.dp))
         
-        TextButton(onClick = { onNavegar("regitsro") }) {
-            Text("no tienes cuenta? Registrate")
+        TextButton(onClick = { onNavegar("registro") }) {
+            Text("no tienes cuenta? registrate")
         }
     }
 }

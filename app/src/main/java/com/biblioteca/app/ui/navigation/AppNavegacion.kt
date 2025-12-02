@@ -29,7 +29,7 @@ fun AppNavegacion() {
             )
         }
         
-        composable("regitsro") {
+        composable("registro") {
             RegistroScreen(
                 onNavegar = { ruta ->
                     navController.navigate(ruta) {

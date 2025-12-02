@@ -3,21 +3,20 @@ package com.biblioteca.app.data.api
 import com.biblioteca.app.data.model.RespuestaAuth
 import com.biblioteca.app.data.model.SolicitudLogin
 import com.biblioteca.app.data.model.SolicitudRegistro
-import com.biblioteca.app.data.model.Usuario
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 
-interface ApiService {
+interface AuthApiService {
     
-    @POST("auth/login")
+    @POST("api/auth/login")
     suspend fun login(@Body solicitud: SolicitudLogin): Response<RespuestaAuth>
     
-    @POST("auth/signup")
+    @POST("api/auth/registro")
     suspend fun registro(@Body solicitud: SolicitudRegistro): Response<RespuestaAuth>
     
-    @GET("auth/me")
-    suspend fun obtenerPerfil(@Header("Authorization") token: String): Response<Usuario>
+    @GET("api/auth/verificar")
+    suspend fun verificarToken(@Header("Authorization") token: String): Response<Any>
 }

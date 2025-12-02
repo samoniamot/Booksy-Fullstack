@@ -1,9 +1,10 @@
 package com.biblioteca.app.data.model
 
 data class Usuario(
-    val id: Int,
+    val id: String,
     val email: String,
-    val name: String?
+    val nombre: String,
+    val rol: String
 )
 
 data class Libro(
@@ -22,10 +23,18 @@ data class SolicitudLogin(
 data class SolicitudRegistro(
     val email: String,
     val password: String,
-    val name: String
+    val nombre: String
 )
 
 data class RespuestaAuth(
-    val authToken: String,
-    val user: Usuario
+    val token: String,
+    val id: String,
+    val email: String,
+    val nombre: String,
+    val rol: String
+)
+
+data class MensajeRespuesta(
+    val mensaje: String,
+    val exito: Boolean
 )
