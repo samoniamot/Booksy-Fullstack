@@ -121,15 +121,9 @@ curl -X POST "https://booksy-backend-fullstack.onrender.com/api/libros" \
   -d '{"titulo":"Nuevo Libro","descripcion":"Descripción","imagen":"url","precio":9990}'
 ```
 
-## Permisos Android
-
-```xml
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-```
-
 ## Repositorios
 
 - **Frontend Android**: Este repositorio
 - **Backend Spring Boot**: Desplegado en Render
 - **Base de datos**: MongoDB Atlas
+
