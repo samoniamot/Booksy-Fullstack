@@ -1,127 +1,135 @@
-Booksy spa - app de gestion de libros
+# Booksy Fullstack - App de Gestión de Libros
 
-Booksy spa es una app para estudiantes y profesores, que quieren adminsitrar sus libros de estudio. es una biblioteca digital basicmanete.
+Booksy es una aplicación fullstack para estudiantes y profesores que quieren administrar sus libros de estudio. Es una biblioteca digital con autenticación JWT y roles.
 
-funcionalidades:
--login y registro con validaciones basicas (contraseña minimo 8 caracteres)
--una pantalla con libros en un grid de 2 columnas
--pantalla de perfil para subir imagen desde la galeria
--animaciones basicas con animatedvisibility
--guardar datos en el telefono con sharedpreferences
--se conecta con una api para traer datos
+## Stack Tecnológico
 
-Lo que usamos para hacerla:
-- kotlin
-- jetpack compose para la interfaz
-- sharedpreferences para guardar el token y la foto de perfil
-- retrofit para llamar a la api
-- navigation compose para moverse entre las pantallas
-- coil para cargar imagenes
+### Frontend (Android)
+- Kotlin
+- Jetpack Compose para la interfaz
+- SharedPreferences para persistencia local (token y foto de perfil)
+- Retrofit para conexiones HTTP con la API
+- Navigation Compose para navegación entre pantallas
+- Coil para carga de imágenes
 
-la api del Swaggger es: https://x8ki-letl-twmt.n7.xano.io/api:Rfm_61dW
+### Backend (Spring Boot)
+- Java 17 + Spring Boot 3.2.0
+- MongoDB como base de datos
+- JWT para autenticación
+- Spring Security para control de acceso por roles
+- Swagger/OpenAPI para documentación
 
-las llamadas Son:
-post /auth/login - para loguearse
-post /auth/signup - para crear cuenta
-get /auth/me - para ver perfil
-get /books - para traer los libros
+## Enlaces de la API
 
--La arquitectura es mvvm, tiene los viewmodels para cada pantalla, y con stateflow para manejar el estado. 
-los recursos nativos son la galeria para cambiar la foto de perfil usando "activityresultlauncher".
+| Recurso | URL |
+|---------|-----|
+| **Swagger UI** | https://booksy-backend-fullstack.onrender.com/swagger-ui.html |
+| **API Docs** | https://booksy-backend-fullstack.onrender.com/v3/api-docs |
+| **Base URL** | https://booksy-backend-fullstack.onrender.com |
 
--las animaciones son con animatedvisibility carga cuadno aparecen los elemetnos en pantalla.
+## Endpoints de la API
 
-el flujo es:
-entrar a la web >  registro o loguearse > ver los libros en un grid > pagina de perfil con foto.
+### Autenticación (`/api/auth`)
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST | `/api/auth/login` | Iniciar sesión (devuelve JWT) |
+| POST | `/api/auth/registro` | Registrar nuevo usuario |
+| GET | `/api/auth/verificar` | Verificar token válido |
 
-Hay manejo basico errores, cuando la api no funciona muestra un loading visual mientras carga. tambien se guardan las cosas en sharedpreferences como el token y la imagen
+### Libros (`/api/libros`)
+| Método | Endpoint | Acceso | Descripción |
+|--------|----------|--------|-------------|
+| GET | `/api/libros` | Público | Listar todos los libros |
+| GET | `/api/libros/{id}` | Público | Obtener libro por ID |
+| GET | `/api/libros/buscar?titulo=` | Público | Buscar por título |
+| POST | `/api/libros` | Solo ADMIN | Crear libro |
+| PUT | `/api/libros/{id}` | Solo ADMIN | Actualizar libro |
+| DELETE | `/api/libros/{id}` | Solo ADMIN | Eliminar libro |
 
+## Credenciales de Prueba
 
-para probar se debe crear una cuenta nueva o usar cualquier cuenta creada anteriormente, ahi se vera el icono de perfil en que se puede editar la imagen, y se veran los libros cargados.
+| Rol | Email | Password |
+|-----|-------|----------|
+| Admin | `admin@booksy.com` | `admin123` |
+| Usuario | `usuario@booksy.com` | `usuario123` |
 
+## Arquitectura
 
+### MVVM (Model-View-ViewModel)
+- **View**: Pantallas Composable que observan estados con `collectAsState()`
+- **ViewModel**: Maneja lógica de negocio y estados con `StateFlow`
+- **Model**: Entidades y repositorios
 
+### Flujo de la App
+1. Login/Registro → obtener token JWT
+2. Token se guarda en SharedPreferences
+3. Ver catálogo de libros (público)
+4. Si es admin: puede crear/editar/eliminar libros
+5. Perfil con foto desde galería
 
+## Funcionalidades
 
+- Login y registro con validaciones (contraseña mínimo 6 caracteres)
+- Catálogo de libros con búsqueda
+- CRUD completo de libros (solo admin)
+- Pantalla de perfil con foto desde galería
+- Animaciones con AnimatedVisibility
+- Persistencia local con SharedPreferences
+- Control de acceso por roles (admin/user)
 
-datos tecnicos:
-diseño:
-/Users/tomas/Coding/Tarea aplicaciones moviles/biblioteca-android/app/src/main/java/com/biblioteca/app/ui/theme/Theme.kt
+## Estructura del Proyecto
 
+```
+biblioteca-android/
+├── app/src/main/java/com/biblioteca/app/
+│   ├── data/
+│   │   ├── api/           # Retrofit services
+│   │   ├── model/         # Data classes
+│   │   └── repository/    # Repositorios
+│   ├── ui/
+│   │   ├── screens/       # Pantallas Composable
+│   │   ├── viewmodel/     # ViewModels
+│   │   ├── navigation/    # Navegación
+│   │   └── theme/         # Tema y estilos
+│   └── MainActivity.kt
 
+booksy-backend/
+├── src/main/java/com/booksy/
+│   ├── controller/        # REST Controllers
+│   ├── model/             # Entidades MongoDB
+│   ├── repository/        # Repositorios
+│   ├── service/           # Servicios
+│   ├── security/          # JWT y Spring Security
+│   └── config/            # Configuraciones
+```
 
-/Users/tomas/Coding/Tarea aplicaciones moviles/biblioteca-android/app/src/main/java/com/biblioteca/app/ui/navigation/AppNavegacion.kt tiene la logica de la navegacion.
+## Probar la API con cURL
 
-en mainactivity, el Navhost es el anvegador de rutas de android, y define las rutas login registtro libros y perfil y qué pantalla mostrara en cada una.
-
-
-
-
-usamos model view view model , jetpack compose para la build y retrofit para conexxiones http con la api
-api:
-
-
-/Users/tomas/Coding/Tarea aplicaciones moviles/biblioteca-android/app/src/main/java/com/biblioteca/app/data/api
-
-https://x8ki-letl-twmt.n7.xano.io/api:Rfm_61dW
-
-
-
--se crea el cliente HTTP con retrofit, ruta del arhicvo /Users/tomas/Coding/Tarea aplicaciones moviles/biblioteca-android/app/src/main/java/com/biblioteca/app/data/api/RetrofitClient.kt
-
-luego tenemos  los ednpoints definidos., en que al ir a loginvewmodel se usan los base url de la api, para leerlo en kotlin, se hace post https://x8ki-letl-twmt.n7.xano.io/api:Rfm_61dW/auth/login. 
-entonces recibo respuesta con hhtp
-
-POST /auth/signup crear usuario no
-POST /auth/login iniciar sesion
-GET /auth/me obtener perfil
-
-
-codigo ia para proabr api
-
-curl -X POST "https://x8ki-letl-twmt.n7.xano.io/api:Rfm_61dW/auth/signup" \
+```bash
+# Login
+curl -X POST "https://booksy-backend-fullstack.onrender.com/api/auth/login" \
   -H "Content-Type: application/json" \
-  -d '{"email":"test'$(date +%s)'@test.com","password":"pass123456","name":"Tomas"}'
+  -d '{"email":"admin@booksy.com","password":"admin123"}'
 
+# Obtener libros (público)
+curl "https://booksy-backend-fullstack.onrender.com/api/libros"
 
+# Crear libro (requiere token de admin)
+curl -X POST "https://booksy-backend-fullstack.onrender.com/api/libros" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <TU_TOKEN>" \
+  -d '{"titulo":"Nuevo Libro","descripcion":"Descripción","imagen":"url","precio":9990}'
+```
 
-validaciones:
-contrasena con 8 o mas caracteres
--animacion en mesaje de error
--si conexion falla muestra error de conexion
--si no encuentra 
+## Permisos Android
 
-
-Persitencia local:
-en /Users/tomas/Coding/Tarea aplicaciones moviles/biblioteca-android/app/src/main/java/com/biblioteca/app/data/repository/PreferenciasRepository.kt todo se guarda bajo SharedPreferences bajo la variable biblioteca_prefs
-
-
-
-
-
-MVVM = 
-view:  solo renderiza la ui, la pantalal, es lo que se vea, entonces vemos todos con flowstate las val, 
-    val email by viewModel.email.collectAsState()
-    val error by viewModel.error.collectAsState()
-    val cargando by viewModel.cargando.collectAsState()
-observa los cambios de estados de viewmodel
-
-
-viewmodel:
-
-
-
-
-
-persmios para camara:
-/Users/tomas/Coding/Tarea aplicaciones moviles/biblioteca-android/app/src/main/java/com/biblioteca/app/ui/screens/PerfilScreen.kt aca se usa activityresultcontracts que es nativo de jetpack
-
-este es un composable de jetpack
-los permisos estan en /Users/tomas/Coding/Tarea aplicaciones moviles/biblioteca-android/app/src/main/AndroidManifest.xml
-
-este es por ejemplo de camara 
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+```
 
-entonces cuadno apreto cambiar imagen de perifl se llama a launcherGaleria en el arhicvo /Users/tomas/Coding/Tarea aplicaciones moviles/biblioteca-android/app/src/main/java/com/biblioteca/app/ui/screens/PerfilScreen.kt
+## Repositorios
 
-las dependencias que uso para esto estan en /Users/tomas/Coding/Tarea aplicaciones moviles/biblioteca-android/app/build.gradle.kts
+- **Frontend Android**: Este repositorio
+- **Backend Spring Boot**: Desplegado en Render
+- **Base de datos**: MongoDB Atlas
